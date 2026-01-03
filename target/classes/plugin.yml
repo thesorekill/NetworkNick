@@ -1,5 +1,5 @@
 name: NetworkNick
-version: 1.0.0
+version: 1.0.1
 main: net.chumbucket.networknick.NetworkNickPlugin
 api-version: "1.20"
 author: Chumbucket
