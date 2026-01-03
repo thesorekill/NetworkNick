@@ -1,0 +1,79 @@
+# =============================================================================
+# NetworkNick - config.yml
+# =============================================================================
+# Notes:
+# - Use spaces (not tabs)
+# - Color codes use & (ex: &a, &c, &l). Hex also supported in /nick.
+# - Redis is required for network-wide sync.
+# =============================================================================
+
+redis:
+  host: "127.0.0.1"
+  port: 6379
+  # Redis username (Ok to leave blank if no username)
+  username: ""
+  password: ""
+  ssl: false
+  timeout-ms: 4000
+
+
+keys:
+  # Key prefix for the active nickname stored in Redis.
+  nick-prefix: "networknick:nick:"
+  # Key prefix for the "prior nick" saved when a player /hide's.
+  prior-prefix: "networknick:prior:"
+  # Pub/Sub channel name used to notify all servers instantly when a nick changes.
+  channel: "networknick:updates"
+
+
+nick:
+  # Maximum VISIBLE nickname length (not counting color codes).
+  # This is capped at 16 for vanilla/tablist/scoreboard compatibility.
+  # The plugin will trim nicknames that exceed this visible length.
+  max-length: 16
+
+
+hide:
+  # Fallback generator length for /hide when hide.nick is blank/missing.
+  # The generated nickname is: "&k" + ":" repeated random-length times
+  #
+  # This value is also clamped to nick.max-length for safety.
+  random-length: 12
+
+  # If true, your UI layer (TAB/scoreboard/chat) can use placeholders to
+  # conditionally remove prefixes/suffixes while hidden.
+  #
+  # NOTE: This plugin does not forcibly rewrite LuckPerms prefixes by itself.
+  # It's intended for conditional formatting via placeholders/config in TAB/etc.
+  hide-prefix: false
+
+  # Custom nickname used when a player runs /hide.
+  # - If set (non-empty), this exact string is used as the hidden nick.
+  # - If it does NOT start with &k, the plugin will prepend &k automatically.
+  # - If blank/missing, the plugin falls back to the generator using random-length.
+  #
+  # Default hides as obfuscated colons:
+  nick: "&k::::::::::::::"
+
+
+enforce:
+  # If true, the plugin will re-apply the nickname periodically for a short time
+  # (or continuously depending on your implementation) to beat other plugins that
+  # overwrite display names after join.
+  #
+  # Useful if you run chat/tab plugins that “refresh” player names later.
+  enabled: true
+
+  # How often to enforce (in server ticks).
+  # 20 ticks = 1 second
+  # 40 ticks = 2 seconds
+  period-ticks: 40
+
+
+messages:
+  nick-set: "&aYour name is now &f{nick}&a."
+  nick-cleared: "&aYour name is now normal."
+  hide-set: "&aYour name is now hidden as &f{nick}&a."
+  unhide: "&aYour name is now &f{nick}&a."
+  invalid: "&cInvalid nickname. Use 3-16 letters/numbers/underscore."
+  no-perms: "&cNo permission."

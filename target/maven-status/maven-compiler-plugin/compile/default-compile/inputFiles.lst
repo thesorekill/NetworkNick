@@ -1,0 +1,14 @@
+C:\Users\tdoms\OneDrive\Desktop\Minecraft Server\Server Plugins\NetworkNick\src\main\java\net\chumbucket\networknick\command\HideCommand.java
+C:\Users\tdoms\OneDrive\Desktop\Minecraft Server\Server Plugins\NetworkNick\src\main\java\net\chumbucket\networknick\command\NickCommand.java
+C:\Users\tdoms\OneDrive\Desktop\Minecraft Server\Server Plugins\NetworkNick\src\main\java\net\chumbucket\networknick\command\NickTabCompleter.java
+C:\Users\tdoms\OneDrive\Desktop\Minecraft Server\Server Plugins\NetworkNick\src\main\java\net\chumbucket\networknick\command\ReloadCommand.java
+C:\Users\tdoms\OneDrive\Desktop\Minecraft Server\Server Plugins\NetworkNick\src\main\java\net\chumbucket\networknick\command\UnhideCommand.java
+C:\Users\tdoms\OneDrive\Desktop\Minecraft Server\Server Plugins\NetworkNick\src\main\java\net\chumbucket\networknick\listener\JoinApplyListener.java
+C:\Users\tdoms\OneDrive\Desktop\Minecraft Server\Server Plugins\NetworkNick\src\main\java\net\chumbucket\networknick\listener\PreLoginNickCacheListener.java
+C:\Users\tdoms\OneDrive\Desktop\Minecraft Server\Server Plugins\NetworkNick\src\main\java\net\chumbucket\networknick\NetworkNickPlugin.java
+C:\Users\tdoms\OneDrive\Desktop\Minecraft Server\Server Plugins\NetworkNick\src\main\java\net\chumbucket\networknick\papi\NetworkNickExpansion.java
+C:\Users\tdoms\OneDrive\Desktop\Minecraft Server\Server Plugins\NetworkNick\src\main\java\net\chumbucket\networknick\redis\RedisBus.java
+C:\Users\tdoms\OneDrive\Desktop\Minecraft Server\Server Plugins\NetworkNick\src\main\java\net\chumbucket\networknick\RedisLibraries.java
+C:\Users\tdoms\OneDrive\Desktop\Minecraft Server\Server Plugins\NetworkNick\src\main\java\net\chumbucket\networknick\service\ExemptService.java
+C:\Users\tdoms\OneDrive\Desktop\Minecraft Server\Server Plugins\NetworkNick\src\main\java\net\chumbucket\networknick\service\NickService.java
+C:\Users\tdoms\OneDrive\Desktop\Minecraft Server\Server Plugins\NetworkNick\src\main\java\net\chumbucket\networknick\util\Msg.java

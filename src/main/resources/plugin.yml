@@ -1,0 +1,84 @@
+name: NetworkNick
+version: 1.0.0
+main: net.chumbucket.networknick.NetworkNickPlugin
+api-version: "1.20"
+author: Chumbucket
+softdepend: [PlaceholderAPI, LuckPerms]
+
+commands:
+  nick:
+    description: Set your network-wide nickname
+    usage: /nick <name|off> [player]
+    permission: networknick.nick
+  hide:
+    description: Hide your name network-wide (obfuscated)
+    usage: /hide
+    permission: networknick.hide
+  unhide:
+    description: Restore your visible name network-wide
+    usage: /unhide [playerOrNick]
+    permission: networknick.unhide
+  networknick:
+    description: NetworkNick admin command
+    usage: /networknick reload
+    permission: networknick.reload
+    aliases: [nnick]
+
+permissions:
+  networknick.nick:
+    description: Allows using /nick for yourself
+    default: op
+
+  networknick.nick.clear:
+    description: Allows clearing your own nickname (/nick off|reset|clear)
+    default: op
+
+  networknick.nick.others:
+    description: Allows setting nicknames for other players
+    default: op
+  networknick.nick.others.clear:
+    description: Allows clearing other players' nicknames (/nick off|reset|clear <player>)
+    default: op
+
+  networknick.nick.colors:
+    description: Allows using color codes (&0-9 &a-f) and hex colors (&#RRGGBB and &x&... format) in /nick
+    default: op
+
+  networknick.nick.format.k:
+    description: Allows using obfuscated (&k) in /nick
+    default: op
+  networknick.nick.format.l:
+    description: Allows using bold (&l) in /nick
+    default: op
+  networknick.nick.format.m:
+    description: Allows using strikethrough (&m) in /nick
+    default: op
+  networknick.nick.format.n:
+    description: Allows using underline (&n) in /nick
+    default: op
+  networknick.nick.format.o:
+    description: Allows using italic (&o) in /nick
+    default: op
+  networknick.nick.format.r:
+    description: Allows using reset (&r) in /nick
+    default: op
+
+  networknick.hide:
+    description: Allows using /hide
+    default: op
+
+  networknick.unhide:
+    description: Allows using /unhide (self)
+    default: op
+
+  networknick.unhide.others:
+    description: Allows using /unhide <playerOrNick> on other players
+    default: op
+
+  networknick.reload:
+    description: Allows reloading NetworkNick config + redis bus
+    default: op
+
+  networknick.exempt:
+    description: Prevents other players from changing/clearing/unhiding your nickname
+    default: op
