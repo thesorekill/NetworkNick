@@ -6,11 +6,11 @@ Designed for modern servers and proxy networks, NetworkNick focuses on **correct
 
 ---
 
-## 🆕 Latest Release — 1.0.0
+## 🆕 Latest Release — 1.0.1
 
 ### Changelog
 
-**1.0.0 is the initial production release.**
+**1.0.1**
 
 - Network-wide nicknames via Redis
 - Join-time correctness (`%player_displayname%` works in join messages)
