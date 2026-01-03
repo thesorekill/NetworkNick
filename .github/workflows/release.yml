@@ -26,15 +26,24 @@ jobs:
       - name: Build
         run: mvn -B clean package
 
-      - name: Find jar
+      - name: List target output (debug)
+        run: ls -la target
+
+      - name: Find built jar (exclude original-*)
         id: jar
+        shell: bash
         run: |
-          JAR=$(ls target/*.jar | head -n 1)
-          echo "jar=$JAR" >> $GITHUB_OUTPUT
+          set -e
+          JAR="$(ls target/*.jar 2>/dev/null | grep -v 'original-' | head -n 1 || true)"
+          if [ -z "$JAR" ]; then
+            echo "No jar found in target/. (Did the build fail or produce a different filename?)"
+            exit 1
+          fi
+          echo "jar=$JAR" >> "$GITHUB_OUTPUT"
           echo "Jar: $JAR"
 
       - name: Create GitHub Release + Upload jar
         uses: softprops/action-gh-release@v2
         with:
-          files: |
-            ${{ steps.jar.outputs.jar }}
+          files: ${{ steps.jar.outputs.jar }}
+          generate_release_notes: true
