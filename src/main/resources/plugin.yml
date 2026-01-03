@@ -1,5 +1,5 @@
 name: NetworkNick
-version: 1.0.0
+version: ${project.version}
 main: net.chumbucket.networknick.NetworkNickPlugin
 api-version: "1.20"
 author: Chumbucket
