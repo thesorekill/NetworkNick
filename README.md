@@ -10,16 +10,9 @@ Designed for modern servers and proxy networks, NetworkNick focuses on **correct
 
 ### Changelog
 
-**1.0.1**
+**1.0.2**
 
-- Network-wide nicknames via Redis
-- Join-time correctness (`%player_displayname%` works in join messages)
-- Offline-safe nickname exemption (LuckPerms integration)
-- Hide / unhide system with prior nickname restoration
-- Robust enforcement against late plugin overrides
-- PlaceholderAPI support
-- Clean reload support
-- Paper & Spigot compatible (no NMS, no ProtocolLib)
+- Fixed tablist issue with TAB
 
 ---
 
