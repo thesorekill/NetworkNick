@@ -12,6 +12,7 @@ package net.chumbucket.networknick.listener;
 
 import net.chumbucket.networknick.redis.RedisBus;
 import net.chumbucket.networknick.service.NickService;
+import net.chumbucket.networknick.util.Msg;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -42,6 +43,14 @@ public final class JoinApplyListener implements Listener {
         this.preloginCache = preloginCache;
     }
 
+    private boolean applyDisplayEnabled() {
+        return plugin.getConfig().getBoolean("apply.display-name", true);
+    }
+
+    private boolean applyListEnabled() {
+        return plugin.getConfig().getBoolean("apply.playerlist-name", true);
+    }
+
     /**
      * LOWEST so our displayname is set before join message plugins run.
      */
@@ -65,11 +74,22 @@ public final class JoinApplyListener implements Listener {
                 service.applyToPlayer(live, nick);
 
                 // 3) Optional short enforcement to beat late overrides
+                //    ✅ Now:
+                //      - only if we actually apply anything
+                //      - runs every 10 ticks (not every tick)
+                //      - only reapplies if current value differs
                 stopEnforce(uuid);
 
-                final int maxTicks = 20 * 3; // 3 seconds
+                final boolean doDisplay = applyDisplayEnabled();
+                final boolean doList = applyListEnabled();
+                if (!doDisplay && !doList) return;
+
+                final String desiredLegacy = (nick == null || nick.isBlank()) ? live.getName() : nick;
+                final String desiredColored = Msg.color(desiredLegacy);
+
+                final int maxRuns = 20 * 3 / 10; // 3 seconds, every 10 ticks => ~6 runs
                 final int taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
-                    int ticks = 0;
+                    int runs = 0;
 
                     @Override
                     public void run() {
@@ -79,12 +99,34 @@ public final class JoinApplyListener implements Listener {
                             return;
                         }
 
-                        service.applyToPlayer(now, nick);
+                        boolean needs = false;
 
-                        ticks++;
-                        if (ticks >= maxTicks) stopEnforce(uuid);
+                        if (doDisplay) {
+                            try {
+                                String cur = now.getDisplayName();
+                                if (cur == null || !cur.equals(desiredColored)) needs = true;
+                            } catch (Throwable ignored) {
+                                needs = true;
+                            }
+                        }
+
+                        if (doList) {
+                            try {
+                                String cur = now.getPlayerListName();
+                                if (cur == null || !cur.equals(desiredColored)) needs = true;
+                            } catch (Throwable ignored) {
+                                needs = true;
+                            }
+                        }
+
+                        if (needs) {
+                            service.applyToPlayer(now, nick);
+                        }
+
+                        runs++;
+                        if (runs >= maxRuns) stopEnforce(uuid);
                     }
-                }, 1L, 1L);
+                }, 10L, 10L);
 
                 enforceTasks.put(uuid, taskId);
             });

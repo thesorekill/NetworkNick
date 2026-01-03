@@ -25,6 +25,12 @@ keys:
   # Pub/Sub channel name used to notify all servers instantly when a nick changes.
   channel: "networknick:updates"
 
+apply:
+  # This will make the nickname show up in tablist if true.
+  # If you're using a plugin like TAB keep this false
+  playerlist_name: false
+  
+  display-name: true # Changes display name for chat
 
 nick:
   # Maximum VISIBLE nickname length (not counting color codes).

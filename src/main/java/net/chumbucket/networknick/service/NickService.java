@@ -43,12 +43,27 @@ public final class NickService implements Listener {
         return s.startsWith("&k") || s.startsWith("§k");
     }
 
+    private boolean applyDisplayNameEnabled() {
+        return plugin.getConfig().getBoolean("apply.display-name", true);
+    }
+
+    private boolean applyPlayerListNameEnabled() {
+        return plugin.getConfig().getBoolean("apply.playerlist-name", true);
+    }
+
+    private boolean applyCustomNameEnabled() {
+        // Optional toggle: defaults true to preserve old behavior
+        return plugin.getConfig().getBoolean("apply.custom-name", true);
+    }
+
     /**
      * Apply the current nick to a player.
      * @param p player
      * @param nameOrNull the nick stored in Redis (or null to clear)
      */
     public void applyToPlayer(Player p, String nameOrNull) {
+        if (p == null) return;
+
         if (nameOrNull == null || nameOrNull.isBlank()) storedNick.remove(p.getUniqueId());
         else storedNick.put(p.getUniqueId(), nameOrNull);
 
@@ -58,51 +73,57 @@ public final class NickService implements Listener {
 
         liveVisibleName.put(p.getUniqueId(), visibleLegacy);
 
+        final boolean doDisplay = applyDisplayNameEnabled();
+        final boolean doList = applyPlayerListNameEnabled();
+        final boolean doCustom = applyCustomNameEnabled();
+
         // 1) Display name (older plugins + many PAPI placeholders use this)
-        try { p.setDisplayName(Msg.color(visibleLegacy)); }
-        catch (Throwable t) { try { p.setDisplayName(visibleLegacy); } catch (Throwable ignored) {} }
+        if (doDisplay) {
+            try { p.setDisplayName(Msg.color(visibleLegacy)); }
+            catch (Throwable t) { try { p.setDisplayName(visibleLegacy); } catch (Throwable ignored) {} }
+        }
 
-        // 2) Player list name (tablist)
-        try { p.setPlayerListName(Msg.color(visibleLegacy)); }
-        catch (Throwable t) { try { p.setPlayerListName(visibleLegacy); } catch (Throwable ignored) {} }
+        // 2) Player list name (tablist)  ✅ this is what causes TAB flicker if both plugins do it
+        if (doList) {
+            try { p.setPlayerListName(Msg.color(visibleLegacy)); }
+            catch (Throwable t) { try { p.setPlayerListName(visibleLegacy); } catch (Throwable ignored) {} }
+        }
 
-        // 3) Custom name + visibility (used by some hologram/entity-name plugins; harmless for players)
-        try {
-            p.setCustomName(Msg.color(visibleLegacy));
-            p.setCustomNameVisible(false);
-        } catch (Throwable ignored) {}
+        // 3) Custom name + visibility (rarely needed for players; keep optional)
+        if (doCustom) {
+            try {
+                p.setCustomName(Msg.color(visibleLegacy));
+                p.setCustomNameVisible(false);
+            } catch (Throwable ignored) {}
+        }
 
         // 4) Paper API (if present): displayName(Component) & playerListName(Component)
-        // We do this reflectively to keep compiling against Spigot API.
-        tryApplyPaperComponents(p, visibleLegacy);
-
-        // NOTE:
-        // - You cannot change the real username that %player% resolves to.
-        // - But %player_displayname% and most chat/tab systems will now pick up the nick.
+        // Only apply the pieces that are enabled
+        tryApplyPaperComponents(p, visibleLegacy, doDisplay, doList);
     }
 
-    private void tryApplyPaperComponents(Player p, String legacy) {
+    private void tryApplyPaperComponents(Player p, String legacy, boolean doDisplay, boolean doList) {
         try {
-            // org.bukkit.entity.Player has these methods on Paper:
-            //   void displayName(Component)
-            //   void playerListName(Component)
-            // Component is from net.kyori.adventure.text.Component (Paper includes it)
             Class<?> componentClass = Class.forName("net.kyori.adventure.text.Component");
 
             Method compMethod = Msg.class.getMethod("component", String.class);
             Object component = compMethod.invoke(null, legacy);
 
             // displayName(Component)
-            try {
-                Method displayName = p.getClass().getMethod("displayName", componentClass);
-                displayName.invoke(p, component);
-            } catch (NoSuchMethodException ignored) {}
+            if (doDisplay) {
+                try {
+                    Method displayName = p.getClass().getMethod("displayName", componentClass);
+                    displayName.invoke(p, component);
+                } catch (NoSuchMethodException ignored) {}
+            }
 
             // playerListName(Component)
-            try {
-                Method listName = p.getClass().getMethod("playerListName", componentClass);
-                listName.invoke(p, component);
-            } catch (NoSuchMethodException ignored) {}
+            if (doList) {
+                try {
+                    Method listName = p.getClass().getMethod("playerListName", componentClass);
+                    listName.invoke(p, component);
+                } catch (NoSuchMethodException ignored) {}
+            }
 
         } catch (Throwable ignored) {
             // Not Paper or Adventure not present—fine.
